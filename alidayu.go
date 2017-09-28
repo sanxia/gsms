@@ -6,7 +6,6 @@ import (
 	"net/url"
 	"sort"
 	"strings"
-	"time"
 )
 
 import (
@@ -76,7 +75,7 @@ func NewAlidayunSms(appKey, appSecret, signName string) SmsProvider {
 	dayuSms.SmsTemplateCode = ""
 	dayuSms.SmsParam = ""
 	dayuSms.RecNum = ""
-	dayuSms.Timestamp = glib.TimeToString(time.Now())
+	dayuSms.Timestamp = glib.CurrentTimeToString()
 	dayuSms.Version = "2.0"
 
 	return dayuSms

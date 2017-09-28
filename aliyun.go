@@ -7,7 +7,6 @@ import (
 	"net/url"
 	"sort"
 	"strings"
-	"time"
 )
 
 import (
@@ -61,7 +60,7 @@ func NewAliyunSms(accessKeyId, accessKeySecret, regionId, signName string) SmsPr
 	yunSms.SignatureMethod = "HMAC-SHA1"
 	yunSms.SignatureVersion = "1.0"
 	yunSms.Format = "JSON"
-	nowDate := glib.DatetimeAddMinutes(time.Now(), -8*60) //相差8个时区
+	nowDate := glib.AddMinutesForCurrent(-8 * 60) //相差8个时区
 	yunSms.Timestamp = glib.TimeToString(nowDate, "2006-01-02T15:04:05Z")
 	yunSms.Version = "2016-09-27"
 
