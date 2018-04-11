@@ -16,8 +16,7 @@ type (
 	}
 
 	SmsTemplateParam struct {
-		Code    string `form:"code" json:"code"`
-		Product string `form:"product" json:"product"`
+		Code string `form:"code" json:"code"`
 	}
 
 	SmsResult struct {

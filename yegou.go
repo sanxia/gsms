@@ -36,6 +36,11 @@ type (
 		Type       string     `form:"type" json:"type"`
 		Timestamp  string     `form:"timestamp" json:"timestamp"`
 	}
+
+	yegouErrorResult struct {
+		Errcode int    `form:"errcode" json:"errcode"`
+		Message string `form:"message" json:"message"`
+	}
 )
 
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -90,9 +95,19 @@ func (s *yegouSms) Send(mobile string) (*SmsResult, error) {
 		result.Message = err.Error()
 		return result, err
 	} else {
-		//{"status" : "ok","data":{"rrid":"bdd977d825084bd0ad7a00597dbd0f69"}}
-		result.IsSuccess = true
 		result.Message = response
+
+		//错误处理
+		//{"status" : "ok","data":{"rrid":"bdd977d825084bd0ad7a00597dbd0f69"}}
+		//{"errcode": 79998,"message": "request error ,error is null"}
+		var errorResult *yegouErrorResult
+		glib.FromJson(response, &errorResult)
+		if len(errorResult.Message) > 0 {
+			result.IsSuccess = false
+			return result, errors.New(errorResult.Message)
+		} else {
+			result.IsSuccess = true
+		}
 	}
 
 	return result, nil

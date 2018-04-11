@@ -25,7 +25,7 @@ type (
 		Action           string `form:"Action" json:"Action"`                     //操作接口名，系统规定参数，取值：SingleSendSms
 		SignName         string `form:"SignName" json:"SignName"`                 //短信签名
 		TemplateCode     string `form:"TemplateCode" json:"TemplateCode"`         //短信模板的模板CODE（状态必须是验证通过）
-		RecNum           string `form:"RecNum" json:"RecNum"`                     //目标手机号，多个手机号可以逗号分隔
+		PhoneNumbers     string `form:"PhoneNumbers" json:"PhoneNumbers"`         //目标手机号，多个手机号可以逗号分隔
 		ParamString      string `form:"ParamString" json:"ParamString"`           //短信模板中的变量；数字需要转换为字符串
 		RegionId         string `form:"RegionId" json:"RegionId"`                 //区域ID
 		AccessKeyId      string `form:"AccessKeyId" json:"AccessKeyId"`           //access id
@@ -45,8 +45,8 @@ type (
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 func NewAliyunSms(accessKeyId, accessKeySecret, regionId, signName string) SmsProvider {
 	yunSms := new(aliyunSms)
-	yunSms.Geteway = "https://sms.aliyuncs.com"
-	yunSms.Action = "SingleSendSms"
+	yunSms.Geteway = "https://dysmsapi.aliyuncs.com"
+	yunSms.Action = "SendSms"
 	yunSms.SignName = signName
 	yunSms.AccessKeyId = accessKeyId
 	yunSms.AccessKeySecret = accessKeySecret
@@ -60,9 +60,9 @@ func NewAliyunSms(accessKeyId, accessKeySecret, regionId, signName string) SmsPr
 	yunSms.SignatureMethod = "HMAC-SHA1"
 	yunSms.SignatureVersion = "1.0"
 	yunSms.Format = "JSON"
-	nowDate := glib.AddMinutesForCurrent(-8 * 60) //相差8个时区
-	yunSms.Timestamp = glib.TimeToString(nowDate, "2006-01-02T15:04:05Z")
-	yunSms.Version = "2016-09-27"
+	nowDate := glib.AddMinutesForCurrent(-8 * 60)                         //相差8个时区
+	yunSms.Timestamp = glib.TimeToString(nowDate, "2006-01-02T15:04:05Z") //yyyy-MM-dd’T’HH:mm:ss’Z’
+	yunSms.Version = "2017-05-25"
 
 	return yunSms
 }
@@ -90,21 +90,18 @@ func (s *aliyunSms) Send(mobiles string) (*SmsResult, error) {
 	}
 
 	//接收手机号码
-	s.RecNum = mobiles
+	s.PhoneNumbers = mobiles
 
 	//签名
 	s.Sign()
 
 	//获取参数字符串，然后附加签名字符串
-	params := s.GetParamString(false) + "&Signature=" + s.Signature
-
-	geteway := "https://sms.aliyuncs.com"
-	if len(s.Geteway) > 0 {
-		geteway = s.Geteway
-	}
+	//params := s.GetParamString(false) + "&Signature=" + s.Signature
+	params := s.GetParamString(true) + "&Signature=" + s.Signature
+	log.Printf("params: %s", params)
 
 	//发送Http请求
-	if response, err := glib.HttpPost(geteway, params); err != nil {
+	if response, err := glib.HttpPost(s.Geteway, params); err != nil {
 		log.Printf("aliyun sms send err %v", err)
 		return result, err
 	} else {
@@ -189,6 +186,8 @@ func (s *aliyunSms) Sign() {
 
 	//base64编码
 	s.Signature = s.PercentEncode(glib.ToBase64(sign))
+
+	log.Printf("Signature: %s", s.Signature)
 }
 
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -209,10 +208,10 @@ func (s *aliyunSms) PercentEncode(str string) string {
 func (s *aliyunSms) toDict() map[string]string {
 	params := make(map[string]string, 0)
 	params["Action"] = s.Action
+	params["PhoneNumbers"] = s.PhoneNumbers
 	params["SignName"] = s.SignName
 	params["TemplateCode"] = s.TemplateCode
-	params["RecNum"] = s.RecNum
-	params["ParamString"] = s.ParamString
+	params["TemplateParam"] = s.ParamString
 	params["AccessKeyId"] = s.AccessKeyId
 	params["RegionId"] = s.RegionId
 	params["SignatureNonce"] = s.SignatureNonce
