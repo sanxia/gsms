@@ -129,6 +129,13 @@ func (s *aliyunSms) SetTemplateParam(templateParam SmsTemplateParam) {
 }
 
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * 设置模版参数字符串
+ * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+func (s *aliyunSms) SetTemplateString(templateString string) {
+	s.ParamString = templateString
+}
+
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * 设置签名字符串
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 func (s *aliyunSms) SetSignName(signName string) {

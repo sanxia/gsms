@@ -11,6 +11,7 @@ type (
 		Send(mobiles string) (*SmsResult, error)
 		SetTemplateCode(code string)
 		SetTemplateParam(templateParam SmsTemplateParam)
+		SetTemplateString(templateString string)
 		SetSignName(signName string)
 		SetGeteway(geteway string)
 	}

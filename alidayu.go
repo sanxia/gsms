@@ -161,6 +161,13 @@ func (s *alidayuSms) SetTemplateParam(templateParam SmsTemplateParam) {
 }
 
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * 设置模版参数字符串
+ * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+func (s *alidayuSms) SetTemplateString(templateString string) {
+	s.SmsParam = templateString
+}
+
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * 设置签名字符串
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 func (s *alidayuSms) SetSignName(signName string) {

@@ -134,6 +134,13 @@ func (s *yegouSms) SetTemplateParam(templateParam SmsTemplateParam) {
 	s.Params = []string{templateParam.Code}
 }
 
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ * 设置模版参数字符串
+ * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+func (s *yegouSms) SetTemplateString(templateString string) {
+	s.Params = []string{templateString}
+}
+
 func (s *yegouSms) SetSignName(signName string) {
 
 }
