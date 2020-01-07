@@ -20,6 +20,13 @@ import (
  * author  : 美丽的地球啊 - mliu
  * ================================================================================ */
 type (
+	AliyunSmsSendResultResponse struct {
+		Code      string `form:"Code" json:"Code"`
+		Message   string `form:"Message" json:"Message"`
+		RequestId string `form:"RequestId" json:"RequestId"`
+		BizId     string `form:"BizId" json:"BizId"`
+	}
+
 	aliyunSms struct {
 		Geteway          string `form:"Geteway" json:"Geteway"`                   //网关
 		Action           string `form:"Action" json:"Action"`                     //操作接口名，系统规定参数，取值：SingleSendSms
@@ -98,15 +105,24 @@ func (s *aliyunSms) Send(mobiles string) (*SmsResult, error) {
 	//获取参数字符串，然后附加签名字符串
 	//params := s.GetParamString(false) + "&Signature=" + s.Signature
 	params := s.GetParamString(true) + "&Signature=" + s.Signature
-	log.Printf("params: %s", params)
 
 	//发送Http请求
 	if response, err := glib.HttpPost(s.Geteway, params); err != nil {
 		log.Printf("aliyun sms send err %v", err)
 		return result, err
 	} else {
-		result.IsSuccess = true
-		log.Printf("aliyun sms send response %s", response)
+		//解析发送成功数据
+		var resultResponse AliyunSmsSendResultResponse
+		glib.FromJson(response, &resultResponse)
+
+		result.Code = resultResponse.Code
+		result.Message = resultResponse.Message
+		result.RequestId = resultResponse.RequestId
+		result.Model = resultResponse.BizId
+
+		if result.Code == "OK" {
+			result.IsSuccess = true
+		}
 	}
 
 	return result, nil
@@ -193,8 +209,6 @@ func (s *aliyunSms) Sign() {
 
 	//base64编码
 	s.Signature = s.PercentEncode(glib.ToBase64(sign))
-
-	log.Printf("Signature: %s", s.Signature)
 }
 
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

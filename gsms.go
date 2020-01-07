@@ -21,7 +21,7 @@ type (
 	}
 
 	SmsResult struct {
-		Code      int32  `form:"err_code" json:"err_code"`
+		Code      string `form:"code" json:"code"`
 		Message   string `form:"msg" json:"msg"`
 		Model     string `form:"model" json:"model"`
 		RequestId string `form:"request_id" json:"request_id"`

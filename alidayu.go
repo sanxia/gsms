@@ -125,7 +125,7 @@ func (s *alidayuSms) Send(mobiles string) (*SmsResult, error) {
 			successResponse := new(AlidayuSmsSendSuccessResponse)
 			glib.FromJson(response, successResponse)
 
-			result.Code = successResponse.Result.Code
+			result.Code = fmt.Sprintf("%d", successResponse.Result.Code)
 			result.Message = successResponse.Result.Message
 			result.Model = successResponse.Result.Model
 			result.RequestId = successResponse.RequestId
@@ -135,7 +135,7 @@ func (s *alidayuSms) Send(mobiles string) (*SmsResult, error) {
 			errorResponse := new(AlidayuSmsSendErrorResponse)
 			glib.FromJson(response, errorResponse)
 
-			result.Code = errorResponse.Result.Code
+			result.Code = fmt.Sprintf("%d", errorResponse.Result.Code)
 			result.Message = errorResponse.Result.Message
 			result.RequestId = errorResponse.Result.RequestId
 		}
